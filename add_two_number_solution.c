@@ -1,87 +1,114 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef struct ListNode {
-    int val;
-    struct ListNode* next;
-} ListNode;
+// Define the ListNode structure  
+struct ListNode {  
+    int val;  
+    struct ListNode* next;  
+};
 
-ListNode* createNode(int value) {
-    ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
-    newNode->val = value;
-    newNode->next = NULL;
-    return newNode;
-}
+struct ListNode* createList(int* arr, int size) {  
+    if (size <= 0) return NULL;  
 
-ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-    ListNode* dummy = createNode(0);
-    ListNode* temp = dummy;
-    int carry = 0;
+    struct ListNode* head = (struct ListNode*)malloc(sizeof(struct ListNode));  
+    struct ListNode* current = head;  
+    
+    head->val = arr[0];  
+    head->next = NULL;  
 
-    while (l1 != NULL || l2 != NULL || carry) {
-        int sum = 0;
+    for (int i = 1; i < size; i++) {  
+        current->next = (struct ListNode*)malloc(sizeof(struct ListNode));  
+        current = current->next;  
+        current->val = arr[i];  
+        current->next = NULL;  
+    }  
+    return head;  
+}  
 
-        if (l1 != NULL) {
-            sum += l1->val;
-            l1 = l1->next;
-        }
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+    
+    struct ListNode* dummyHead = malloc (sizeof(struct ListNode));
+  
+    dummyHead -> val = 0; // nó criado para iniciar a lista que vai ter a soma de l1 e l2 
+    dummyHead -> next = NULL; //o próximo nó após o dummyhead ainda não existe, mas que vai ser a primeira soma depois
+    
+    //O nó dummyHead atuaria como um cabeçalho ou um ponto de referência para a lista, facilitando operações de inserção e remoção. 
+    struct ListNode* curr = dummyHead; //inicialmente o ponteiro curr aponta para a dummyHead, ao longo do loop de soma, curr se move para o próximo nó seguindo a soma sequencial 
+    int carry = 0; // variavel inteira, caso o numero inteiro do nó exeder de 9.
 
-        if (l2 != NULL) {
-            sum += l2->val;
-            l2 = l2->next;
-        }
-
-        sum += carry;
+    while (l1 != NULL || l2 != NULL || carry != 0) {
+        int x = (l1 != NULL) ? l1 -> val : 0; //"Se l1 não é nulo, então x recebe l1->val, caso contrário x recebe 0."
+ //uso de operadores ternários, o operador compacta ser:
+    //    if(l1 != NULL){ 
+    //        x= l1-> val;
+    //    } else {
+    //    x = 0;
+    //    }
+       int y = (l2 != NULL) ? l2 -> val : 0;
+        int sum = carry + x + y;
         carry = sum / 10;
 
-        temp->next = createNode(sum % 10);
-        temp = temp->next;
-    }
+        curr-> next = malloc (sizeof (struct ListNode)); // Aloca memória para o próximo nó da lista, ainda não foi criado o nó propriamente dito. Para criar o nó propriamente dito, você precisa definir os valores dos membros do nó após a alocação de memória.
 
-    return dummy->next;
+        curr-> next -> val = sum % 10; //proximo valor criado, com o valor da soma dividido por 10 para saber se é de 0 a 9.
+        curr-> next -> next = NULL;
+        curr = curr -> next;
+
+// Define o ponteiro 'next' do nó atual ('curr') para NULL,
+// o que significa que o nó seguinte do nó atual não aponta para nenhum outro nó,
+// efetivamente isolando o nó atual na lista.
+
+// Atualiza o ponteiro 'curr' para o próximo nó na lista,
+// movendo a referência para o próximo elemento após o nó atual.
+
+        if (l1 != NULL) l1 = l1 -> next;
+        if (l2 != NULL) l2 = l2 -> next;
+
+//Nesse código, o loop continua até que ambas as listas sejam NULL. Para cada iteração do loop, ele verifica se l1 ou l2 ainda têm elementos e, em caso afirmativo, imprime o valor do nó atual e avança para o próximo nó. Isso garante que todos os elementos de ambas as listas sejam impressos, mesmo que uma lista tenha mais elementos que a outra.
+    }
+    struct ListNode* result = dummyHead -> next;
+//cria um ponteiro chamado result que aponta para o nó que está logo após o nó dummyHead.
+
+    free (dummyHead);
+    return result; 
+//  o código está limpando a memória utilizada por dummyHead e retornando a lista resultante ou os dados associados ao ponteiro result.
 }
 
-void printList(ListNode* head) {
-    while (head != NULL) {
-        printf("%d", head->val);
-        if (head->next != NULL) {
-            printf(" -> ");
-        }
-        head = head->next;
-    }
-    printf("\n");
-}
+void printList(struct ListNode* node) {  
+     while (node != NULL) {  
+        printf("%d", node->val);  // Print the value of the current node  
+        node = node->next;         // Move to the next node  
+        if (node != NULL) {        // Check if there is a next node  
+            printf(" -> ");        // Print the arrow only if there is a next node  
+        }  
+    }  
+}  
 
-int main() {
+void freeList(struct ListNode* node) {  
+    while (node != NULL) {  
+        struct ListNode* temp = node;  
+        node = node->next;  
+        free(temp);  
+    }  
+}  
 
-    ListNode* l1 = createNode(2);
-    l1->next = createNode(4);
-    l1->next->next = createNode(3); 
+int main() {  
+    // Example lists: 342 (3 -> 4 -> 2) and 465 (5 -> 6 -> 4)  
+    int arr1[] = {2, 4, 8};  
+    int arr2[] = {5, 6, 4};  
 
-    ListNode* l2 = createNode(5);
-    l2->next = createNode(6);
-    l2->next->next = createNode(4); 
-    printf("L1: ");
-    printList(l1);
-    printf("L2: ");
-    printList(l2);
+    struct ListNode* l1 = createList(arr1, 3);  
+    struct ListNode* l2 = createList(arr2, 3);  
 
-    ListNode* result = addTwoNumbers(l1, l2);
+   struct ListNode* result = addTwoNumbers(l1, l2);  
+    
+    printList(result); // Should print: 7 -> 0 -> 3 -> NULL  
 
-    printf("Result: ");
-    printList(result);
-
-    free(l1->next->next);
-    free(l1->next);
-    free(l1);
-    free(l2->next->next);
-    free(l2->next);
-    free(l2);
-    while (result != NULL) {
-        ListNode* temp = result;
-        result = result->next;
-        free(temp);
-    }
-
-    return 0;
-}
+    // Free the allocated memory  
+    freeList(result);  
+    freeList(l1);  
+    freeList(l2);  
+    
+    return 0;  
+}  
