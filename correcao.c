@@ -40,7 +40,6 @@ void heapifyUp(int *heap, int index) {
     }
 }
 
-// Função de criação do SeatManager
 SeatManager* createSeatManager(int n) {
     SeatManager *manager = (SeatManager*)malloc(sizeof(SeatManager));
     manager->heap = (int*)malloc(n * sizeof(int));
@@ -53,18 +52,16 @@ SeatManager* createSeatManager(int n) {
     return manager;
 }
 
-// Função para reservar o menor assento disponível
 int reserve(SeatManager* obj) {
     if (obj->size == 0) return -1; // Nenhum assento disponível
 
     int seat = obj->heap[0]; // Menor assento
-    obj->heap[0] = obj->heap[--(obj->size)]; // Substitui pelo último e reduz tamanho
-    heapifyDown(obj->heap, obj->size, 0); // Ajusta a heap
+    obj->heap[0] = obj->heap[--(obj->size)]; 
+    heapifyDown(obj->heap, obj->size, 0); 
 
     return seat;
 }
 
-// Desreservar um assento (reinsere na heap)
 void unreserve(SeatManager* obj, int seatNumber) {
     obj->heap[obj->size++] = seatNumber;
     heapifyUp(obj->heap, obj->size - 1);
@@ -85,31 +82,31 @@ int main() {
 
     int result;
     
-    result = reserve(manager);  // Reserva o primeiro assento
+    result = reserve(manager);
     printf("%d\n", result);
     
-    result = reserve(manager);  // Reserva o próximo assento
+    result = reserve(manager); 
     printf("%d\n", result);
     
-    unreserve(manager, 2);  // Desreserva o assento 2
+    unreserve(manager, 2); 
     printf("null\n");
     
-    result = reserve(manager);  // Reserva o próximo assento
+    result = reserve(manager); 
     printf("%d\n", result);
     
-    result = reserve(manager);  // Reserva o próximo assento
+    result = reserve(manager); 
     printf("%d\n", result);
     
-    result = reserve(manager);  // Reserva o próximo assento
+    result = reserve(manager); 
     printf("%d\n", result);
     
-    result = reserve(manager);  // Tenta reservar depois de todos os assentos estarem reservados
-    printf("%d\n", result);  // Deve retornar -1
+    result = reserve(manager);  
+    printf("%d\n", result);  
     
-    unreserve(manager, 5);  // Desreserva o assento 5
+    unreserve(manager, 5); 
     printf("null\n");
     
-    seatManagerFree(manager);  // Libera a memória alocada pelo SeatManager
+    seatManagerFree(manager); 
 
     return 0;
 }
