@@ -61,7 +61,7 @@ int peek (Stack* stack){
 //check if the stack is Empty 
 
 bool isEmpty  (Stack* stack) {
-    return stack -> top == NULL;
+    return stack -> top == NULL; // == comparação
 }
 
 //main function testing
